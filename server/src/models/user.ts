@@ -2,21 +2,21 @@ import mongoose from 'mongoose';
 import { Password } from '../services/password';
 
 // Interface that describes the properties for creating a user
-interface UserAttrs {
+export interface UserAttrs {
     email: string;
     displayName: string;
     password: string;
-    role: 'user' | 'admin';
-    cartId: mongoose.Types.ObjectId;
+    role?: 'user' | 'admin';
+    cartId?: mongoose.Types.ObjectId;
 }
 
 // Interface that describes the properties that a user model has
-interface UserModel extends mongoose.Model<UserDoc> {
+export interface UserModel extends mongoose.Model<UserDoc> {
     build(attrs: UserAttrs): UserDoc;
 }
 
 // Interface that describes the properties a user document has
-interface UserDoc extends mongoose.Document {
+export interface UserDoc extends mongoose.Document {
     email: string;
     displayName: string;
     password: string;
@@ -43,13 +43,11 @@ const userSchema = new mongoose.Schema(
 
         role: {
             type: String,
-            required: true,
             default: 'user',
         },
 
         cartId: {
             type: mongoose.Schema.Types.ObjectId,
-            required: true,
             ref: 'Cart',
         },
     },
@@ -71,8 +69,12 @@ userSchema.pre('save', async function (done) {
         this.set('password', hashed);
     }
 
-    if (this.email === process.env.ADMIN_EMAIL) {
-        this.set('role', 'admin');
+    // check if the email is admin email
+    /**
+     * TODO: change the email into .env after testing.
+     */
+    if (this.email === 'admin@gmail.com') {
+        this.role = 'admin';
     }
 
     done();

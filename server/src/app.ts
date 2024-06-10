@@ -9,7 +9,7 @@ import { errorHandler } from './middleware/error-handler';
 // import { currentuserRouter } from './routes/auth/current-user';
 // import { signinRouter } from './routes/auth/sign-in';
 // import { signoutRouter } from './routes/auth/sign-out';
-// import { signupRouter } from './routes/auth/sign-up';
+import { signupRouter } from './routes/auth/sign-up';
 // import { NotFoundError } from './errors/not-found-error';
 // import { errorHandler } from './middleware/error-handler';
 // import { savePasswordRotuer } from './routes/password/save-password';
@@ -39,7 +39,7 @@ app.use(
 // app.use(currentuserRouter);
 // app.use(signinRouter);
 // app.use(signoutRouter);
-// app.use(signupRouter);
+app.use(signupRouter);
 
 // password routes
 // app.use(savePasswordRotuer);
