@@ -16,7 +16,7 @@ interface BookModel extends mongoose.Model<BookDoc> {
 }
 
 // Interface that describes the properties a book document has
-interface BookDoc extends mongoose.Document {
+export interface BookDoc extends mongoose.Document {
     title: string;
     author: string;
     price: number;

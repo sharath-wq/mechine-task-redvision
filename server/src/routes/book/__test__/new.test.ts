@@ -3,23 +3,23 @@ import { app } from '../../../app';
 import { getCookies } from '../../../utils/get-cookies';
 import { Book } from '../../../models/book';
 
-it('has a route handler listening to /api/book for post requests', async () => {
-    const response = await request(app).post('/api/book').send({});
+it('has a route handler listening to /api/books for post requests', async () => {
+    const response = await request(app).post('/api/books').send({});
     expect(response.status).not.toEqual(404);
 });
 
 it('can only be accessed if the user is signed in', async () => {
-    await request(app).post('/api/book').send({}).expect(401);
+    await request(app).post('/api/books').send({}).expect(401);
 });
 
 it('returns a status other than 401 if the user is signed in', async () => {
-    const response = await request(app).post('/api/book').set('Cookie', getCookies('admin@gmail.com')).send({});
+    const response = await request(app).post('/api/books').set('Cookie', getCookies('admin@gmail.com')).send({});
 
     expect(response.status).not.toEqual(401);
 });
 
 it('returns a status other than 401 if the user does not have admin privilage', async () => {
-    const response = await request(app).post('/api/book').set('Cookie', getCookies('admin@gmail.com')).send({});
+    const response = await request(app).post('/api/books').set('Cookie', getCookies('admin@gmail.com')).send({});
 
     expect(response.status).not.toEqual(401);
 });
@@ -28,7 +28,7 @@ it('returns an error if an invalid title is provided', async () => {
     const cookie = await getCookies('admin@gmail.com');
 
     await request(app)
-        .post('/api/book')
+        .post('/api/books')
         .set('Cookie', cookie)
         .send({
             title: '',
@@ -41,7 +41,7 @@ it('returns an error if an invalid title is provided', async () => {
         .expect(400);
 
     await request(app)
-        .post('/api/book')
+        .post('/api/books')
         .set('Cookie', cookie)
         .send({
             author: 'Author',
@@ -57,7 +57,7 @@ it('returns an error if an invalid author is provided', async () => {
     const cookie = await getCookies('admin@gmail.com');
 
     await request(app)
-        .post('/api/book')
+        .post('/api/books')
         .set('Cookie', cookie)
         .send({
             title: 'Title',
@@ -70,7 +70,7 @@ it('returns an error if an invalid author is provided', async () => {
         .expect(400);
 
     await request(app)
-        .post('/api/book')
+        .post('/api/books')
         .set('Cookie', cookie)
         .send({
             title: 'Title',
@@ -86,7 +86,7 @@ it('returns an error if an invalid price is provided', async () => {
     const cookie = await getCookies('admin@gmail.com');
 
     await request(app)
-        .post('/api/book')
+        .post('/api/books')
         .set('Cookie', cookie)
         .send({
             title: 'Title',
@@ -99,7 +99,7 @@ it('returns an error if an invalid price is provided', async () => {
         .expect(400);
 
     await request(app)
-        .post('/api/book')
+        .post('/api/books')
         .set('Cookie', cookie)
         .send({
             title: 'Title',
@@ -115,7 +115,7 @@ it('returns an error if an invalid pages is provided', async () => {
     const cookie = await getCookies('admin@gmail.com');
 
     await request(app)
-        .post('/api/book')
+        .post('/api/books')
         .set('Cookie', cookie)
         .send({
             title: 'Title',
@@ -128,7 +128,7 @@ it('returns an error if an invalid pages is provided', async () => {
         .expect(400);
 
     await request(app)
-        .post('/api/book')
+        .post('/api/books')
         .set('Cookie', cookie)
         .send({
             title: 'Title',
@@ -144,7 +144,7 @@ it('returns an error if an invalid category is provided', async () => {
     const cookie = await getCookies('admin@gmail.com');
 
     await request(app)
-        .post('/api/book')
+        .post('/api/books')
         .set('Cookie', cookie)
         .send({
             title: 'Title',
@@ -157,7 +157,7 @@ it('returns an error if an invalid category is provided', async () => {
         .expect(400);
 
     await request(app)
-        .post('/api/book')
+        .post('/api/books')
         .set('Cookie', cookie)
         .send({
             title: 'Title',
@@ -173,7 +173,7 @@ it('returns an error if an invalid imageUrl is provided', async () => {
     const cookie = await getCookies('admin@gmail.com');
 
     await request(app)
-        .post('/api/book')
+        .post('/api/books')
         .set('Cookie', cookie)
         .send({
             title: 'Title',
@@ -186,7 +186,7 @@ it('returns an error if an invalid imageUrl is provided', async () => {
         .expect(400);
 
     await request(app)
-        .post('/api/book')
+        .post('/api/books')
         .set('Cookie', cookie)
         .send({
             title: 'Title',
@@ -211,7 +211,7 @@ it('creates a book with valid inputs', async () => {
     const imageUrl = 'http://example.com/image.jpg';
 
     const response = await request(app)
-        .post('/api/book')
+        .post('/api/books')
         .set('Cookie', cookie)
         .send({
             title,

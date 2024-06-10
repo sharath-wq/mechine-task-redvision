@@ -6,10 +6,10 @@ import cors from 'cors';
 
 import { NotFoundError } from './errors/not-found-error';
 import { errorHandler } from './middleware/error-handler';
+import { currentUser } from './middleware/current-user';
 
 import { signupRouter, signinRouter, signoutRouter } from './routes/auth';
-import { createBookRouter } from './routes/book';
-import { currentUser } from './middleware/current-user';
+import { createBookRouter, updateBookRouter, deleteBookRouter, getAllBooksRouter, getOneBookRouter } from './routes/book';
 
 const app = express();
 app.set('trust proxy', true);
@@ -38,6 +38,10 @@ app.use(signupRouter);
 
 // book routes
 app.use(createBookRouter);
+app.use(updateBookRouter);
+app.use(deleteBookRouter);
+app.use(getAllBooksRouter);
+app.use(getOneBookRouter);
 
 // Not found hanlder
 app.all('*', async () => {
