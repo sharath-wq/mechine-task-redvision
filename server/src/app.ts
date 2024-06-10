@@ -8,6 +8,8 @@ import { NotFoundError } from './errors/not-found-error';
 import { errorHandler } from './middleware/error-handler';
 
 import { signupRouter, signinRouter, signoutRouter } from './routes/auth';
+import { createBookRouter } from './routes/book';
+import { currentUser } from './middleware/current-user';
 
 const app = express();
 app.set('trust proxy', true);
@@ -27,10 +29,15 @@ app.use(
     })
 );
 
+app.use(currentUser);
+
 // auth routes
 app.use(signinRouter);
 app.use(signoutRouter);
 app.use(signupRouter);
+
+// book routes
+app.use(createBookRouter);
 
 // Not found hanlder
 app.all('*', async () => {
