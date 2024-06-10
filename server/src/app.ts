@@ -23,7 +23,7 @@ app.use(json());
 app.use(
     cors({
         origin: ['localhost'],
-        credentials: true,
+        credentials: process.env.NODE_ENV !== 'prod',
     })
 );
 
