@@ -10,6 +10,7 @@ import { currentUser } from './middleware/current-user';
 
 import { signupRouter, signinRouter, signoutRouter } from './routes/auth';
 import { createBookRouter, updateBookRouter, deleteBookRouter, getAllBooksRouter, getOneBookRouter } from './routes/book';
+import { updateCartRouter, viewCartRouter } from './routes/cart';
 
 const app = express();
 app.set('trust proxy', true);
@@ -42,6 +43,10 @@ app.use(updateBookRouter);
 app.use(deleteBookRouter);
 app.use(getAllBooksRouter);
 app.use(getOneBookRouter);
+
+// cart routes
+app.use(updateCartRouter);
+app.use(viewCartRouter);
 
 // Not found hanlder
 app.all('*', async () => {

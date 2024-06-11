@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 
-const getCookies = (email = 'test@gmail.com') => {
+const getCookies = (email = 'test@gmail.com', id = new mongoose.Types.ObjectId().toHexString()) => {
     // Build a JWT payload. {id, email}
     const payload = {
-        id: new mongoose.Types.ObjectId().toHexString(),
+        id: id,
         email: email,
         role: email === 'admin@gmail.com' ? 'admin' : 'user',
     };

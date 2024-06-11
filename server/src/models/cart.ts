@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 // Interface that describes the properties of an item in the cart
-interface CartItem {
+export interface CartItem {
     productId: mongoose.Types.ObjectId;
     quantity: number;
     price: number;
@@ -73,6 +73,17 @@ const cartSchema = new mongoose.Schema(
         },
     }
 );
+
+cartSchema.pre('save', async function (done) {
+    if (this.isModified('items')) {
+        // Calculate total price
+        const totalPrice = this.items.reduce((acc: number, curr: CartItem) => acc + curr.price * curr.quantity, 0);
+
+        this.set('totalPrice', totalPrice);
+    }
+
+    done();
+});
 
 cartSchema.statics.build = (attrs: CartAttrs) => {
     return new Cart(attrs);
