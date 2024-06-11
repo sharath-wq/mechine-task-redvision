@@ -6,7 +6,7 @@ it('returns a 400 with an invlaid email', async () => {
         .post('/api/users/signup')
         .send({
             email: 'asdfkaskf',
-            displayName: 'testUser',
+            name: 'testUser',
             password: 'password',
         })
         .expect(400);
@@ -17,7 +17,7 @@ it('returns a 400 with an invlaid password', async () => {
         .post('/api/users/signup')
         .send({
             email: 'test@gmail.com',
-            displayName: 'testUser',
+            name: 'testUser',
             password: 'p',
         })
         .expect(400);
@@ -44,7 +44,7 @@ it('disallows duplicate emails', async () => {
         .post('/api/users/signup')
         .send({
             email: 'test@test.com',
-            displayName: 'testUser',
+            name: 'testUser',
             password: 'password',
         })
         .expect(201);
@@ -52,7 +52,7 @@ it('disallows duplicate emails', async () => {
         .post('/api/users/signup')
         .send({
             email: 'test@test.com',
-            displayName: 'testUser',
+            name: 'testUser',
             password: 'password',
         })
         .expect(400);
@@ -63,7 +63,7 @@ it('sets a cookie after successful signup', async () => {
         .post('/api/users/signup')
         .send({
             email: 'test@test.com',
-            displayName: 'testUser',
+            name: 'testUser',
             password: 'password',
         })
         .expect(201);
@@ -76,7 +76,7 @@ it('create a user with cart', async () => {
         .post('/api/users/signup')
         .send({
             email: 'test@test.com',
-            displayName: 'testUser',
+            name: 'testUser',
             password: 'password',
         })
         .expect(201);
@@ -89,7 +89,7 @@ it('create a user with role admin for admin email', async () => {
         .post('/api/users/signup')
         .send({
             email: 'admin@gmail.com',
-            displayName: 'testUser',
+            name: 'testUser',
             password: 'password',
         })
         .expect(201);
@@ -102,7 +102,7 @@ it('create a user with role user for every other email', async () => {
         .post('/api/users/signup')
         .send({
             email: 'user@gmail.com',
-            displayName: 'testUser',
+            name: 'testUser',
             password: 'password',
         })
         .expect(201);
@@ -115,7 +115,7 @@ it('returns a 201 on successful signup', async () => {
         .post('/api/users/signup')
         .send({
             email: 'test@test.com',
-            displayName: 'testUser',
+            name: 'testUser',
             password: 'password',
         })
         .expect(201);

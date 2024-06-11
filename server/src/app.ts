@@ -12,15 +12,15 @@ import { signupRouter, signinRouter, signoutRouter } from './routes/auth';
 import { createBookRouter, updateBookRouter, deleteBookRouter, getAllBooksRouter, getOneBookRouter } from './routes/book';
 import { updateCartRouter, viewCartRouter } from './routes/cart';
 
+const corsOptions = {
+    origin: 'http://localhost:5173',
+    credentials: true,
+};
+
 const app = express();
 app.set('trust proxy', true);
 app.use(json());
-app.use(
-    cors({
-        origin: ['localhost'],
-        credentials: process.env.NODE_ENV !== 'prod',
-    })
-);
+app.use(cors(corsOptions));
 
 app.use(
     cookieSession({

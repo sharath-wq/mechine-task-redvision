@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
 
 import { User } from '../../models/user';
@@ -11,7 +10,7 @@ import { validateUser } from '../../middleware/user-validator';
 const router = express.Router();
 
 router.post('/api/users/signup', validateUser, validateRequest, async (req: Request, res: Response) => {
-    const { email, password, displayName } = req.body;
+    const { email, password, name } = req.body;
 
     const existingUser = await User.findOne({ email });
 
@@ -21,7 +20,7 @@ router.post('/api/users/signup', validateUser, validateRequest, async (req: Requ
     }
 
     // create user without cart id
-    const user = User.build({ email, password, displayName });
+    const user = User.build({ email, password, name });
 
     // creating cart with user id
     const cart = Cart.build({

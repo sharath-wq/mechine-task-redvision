@@ -27,7 +27,7 @@ router.post('/api/users/signin', validateLogin, validateRequest, async (req: Req
     const userJwt = jwt.sign(
         {
             id: existingUser._id,
-            displayName: existingUser.displayName,
+            name: existingUser.name,
             email: existingUser.email,
         },
         process.env.JWT_KEY!
