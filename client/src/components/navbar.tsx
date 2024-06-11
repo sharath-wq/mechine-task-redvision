@@ -28,11 +28,17 @@ export default function Navbar() {
             });
 
             dispatch(clearUser());
-        } catch (error) {
+        } catch (error: any) {
+            let errorMessage = 'There was a problem with your request.';
+
+            if (error.response && error.response.data.errors && error.response.data.errors.length > 0) {
+                errorMessage = error.response.data.errors.map((err: { message: string }) => err.message).join(', ');
+            }
+
             toast({
                 variant: 'destructive',
                 title: 'Uh oh! Something went wrong.',
-                description: 'There was a problem with your request.' + error,
+                description: errorMessage,
             });
         }
     };
