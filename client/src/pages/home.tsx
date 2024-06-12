@@ -1,79 +1,136 @@
-import { useState, useMemo, ChangeEvent } from 'react';
-import { FilterIcon } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { BookIcon, FilterIcon, TagIcon } from 'lucide-react';
+import axios from 'axios';
 
-import { books } from '@/constants';
+import { BASE_URL } from '@/constants';
 
 import { Input } from '@/components/ui/input';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Link } from 'react-router-dom';
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from '@/components/ui/pagination';
-// import { Pagination } from '@/components/ui/pagination';
-
-interface Book {
-    id: number;
-    title: string;
-    author: string;
-    category: string;
-    price: number;
-}
+import { toast } from '@/components/ui/use-toast';
+import { Book } from '@/components/book/data-table';
+import { Card } from '@/components/ui/card';
+import useDebounce from '@/lib/debounce';
 
 export default function Component() {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
     const [selectedAuthors, setSelectedAuthors] = useState<string[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [booksPerPage] = useState<number>(12);
+    const [availableCategories, setAvailableCategories] = useState<string[]>([]);
+    const [availableAuthors, setAvailableAuthors] = useState<string[]>([]);
 
-    const filteredBooks = useMemo(() => {
-        let filtered = books.filter((book: Book) => {
-            const titleMatch = book.title.toLowerCase().includes(searchTerm.toLowerCase());
-            const authorMatch = book.author.toLowerCase().includes(searchTerm.toLowerCase());
-            const categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(book.category);
-            const authorMatch2 = selectedAuthors.length === 0 || selectedAuthors.includes(book.author);
-            return titleMatch || (authorMatch && categoryMatch && authorMatch2);
-        });
-        return filtered;
-    }, [searchTerm, selectedCategories, selectedAuthors]);
+    const [hasMore, setHasMore] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+    const debouce = useDebounce(searchTerm);
+    const [books, setBooks] = useState<Book[]>([]);
 
-    const indexOfLastBook = currentPage * booksPerPage;
-    const indexOfFirstBook = indexOfLastBook - booksPerPage;
-    const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
+    useEffect(() => {
+        fetchOptions();
+    }, []);
 
-    const handleCategoryChange = (category: string) => {
-        if (selectedCategories.includes(category)) {
-            setSelectedCategories(selectedCategories.filter((c) => c !== category));
-        } else {
-            setSelectedCategories([...selectedCategories, category]);
+    // Fetch books from the backend
+    async function fetchBooks() {
+        try {
+            const { data } = await axios.get(`${BASE_URL}/books`, {
+                params: {
+                    search: searchTerm ? searchTerm : null,
+                    category: selectedCategories,
+                    author: selectedAuthors,
+                    page: currentPage,
+                },
+            });
+            setBooks((prev) => {
+                const newBooks = [...prev, ...data];
+                const uniqueBooks = Array.from(new Set(newBooks.map((book) => book.id))).map((id) =>
+                    newBooks.find((book) => book.id === id)
+                );
+                return uniqueBooks;
+            });
+
+            setHasMore(data.length > 0);
+        } catch (error: any) {
+            handleErrorResponse(error);
         }
-    };
+    }
 
-    const handleAuthorChange = (author: string) => {
-        if (selectedAuthors.includes(author)) {
-            setSelectedAuthors(selectedAuthors.filter((a) => a !== author));
-        } else {
-            setSelectedAuthors([...selectedAuthors, author]);
-        }
-    };
-
-    const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value);
+    useEffect(() => {
+        setBooks([]);
         setCurrentPage(1);
+    }, [debouce, selectedAuthors, selectedCategories]);
+
+    // Fetch available categories and authors from the backend
+    async function fetchOptions() {
+        try {
+            const { data } = await axios.get(`${BASE_URL}/books/options`);
+            setAvailableAuthors(data.authors || []);
+            setAvailableCategories(data.categories || []);
+        } catch (error: any) {
+            handleErrorResponse(error);
+        }
+    }
+
+    // Handle error response from API
+    function handleErrorResponse(error: any) {
+        let errorMessage = 'There was a problem with your request.';
+        if (error.response && error.response.data.errors && error.response.data.errors.length > 0) {
+            errorMessage = error.response.data.errors.map((err: { message: string }) => err.message).join(', ');
+        }
+        toast({
+            variant: 'destructive',
+            title: 'Uh oh! Something went wrong.',
+            description: errorMessage,
+        });
+    }
+
+    // Handle category filter change
+    const handleCategoryChange = (category: string) => {
+        setSelectedCategories((prev) => {
+            if (prev.includes(category)) {
+                return prev.filter((c) => c !== category);
+            } else {
+                return [...prev, category];
+            }
+        });
     };
 
+    // Handle author filter change
+    const handleAuthorChange = (author: string) => {
+        setSelectedAuthors((prev) => {
+            if (prev.includes(author)) {
+                return prev.filter((a) => a !== author);
+            } else {
+                return [...prev, author];
+            }
+        });
+    };
+
+    useEffect(() => {
+        fetchBooks();
+    }, [debouce, selectedAuthors, selectedCategories, currentPage]);
+
+    // Handle adding a book to the cart
     const handleAddToCart = (book: Book) => {
         console.log(`Added ${book.title} to cart`);
     };
+
+    const observer = useRef<IntersectionObserver>();
+    const lastBookRef = useCallback(
+        (node: HTMLDivElement | null) => {
+            if (isLoading || isLoadingMore) return;
+            if (observer.current) observer.current.disconnect();
+            observer.current = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting && hasMore) {
+                    setCurrentPage((prev) => prev + 1);
+                }
+            });
+            if (node) observer.current.observe(node);
+        },
+        [isLoading, isLoadingMore, hasMore]
+    );
 
     return (
         <div className='container mx-auto px-4 md:px-6 py-12'>
@@ -83,7 +140,7 @@ export default function Component() {
                         type='text'
                         placeholder='Search by title or author'
                         value={searchTerm}
-                        onChange={handleSearch}
+                        onChange={(e) => setSearchTerm(e.target.value)}
                         className='w-full max-w-md bg-white dark:bg-gray-950'
                     />
                     <DropdownMenu>
@@ -98,35 +155,31 @@ export default function Component() {
                                 <div>
                                     <h3 className='font-semibold mb-2'>Category</h3>
                                     <div className='grid gap-2'>
-                                        {['Fiction', 'Self-Help', 'Memoir', 'History', 'Non-Fiction'].map((category) => (
-                                            <Label key={category} className='flex items-center gap-2 font-normal'>
-                                                <Checkbox
-                                                    checked={selectedCategories.includes(category)}
-                                                    onCheckedChange={() => handleCategoryChange(category)}
-                                                />
-                                                {category}
-                                            </Label>
-                                        ))}
+                                        {availableCategories &&
+                                            availableCategories.map((category) => (
+                                                <Label key={category} className='flex items-center gap-2 font-normal'>
+                                                    <Checkbox
+                                                        checked={selectedCategories.includes(category)}
+                                                        onCheckedChange={() => handleCategoryChange(category)}
+                                                    />
+                                                    {category}
+                                                </Label>
+                                            ))}
                                     </div>
                                 </div>
                                 <div>
                                     <h3 className='font-semibold mb-2'>Author</h3>
                                     <div className='grid gap-2'>
-                                        {[
-                                            'F. Scott Fitzgerald',
-                                            'Harper Lee',
-                                            'James Clear',
-                                            'Paulo Coelho',
-                                            'Tara Westover',
-                                        ].map((author) => (
-                                            <Label key={author} className='flex items-center gap-2 font-normal'>
-                                                <Checkbox
-                                                    checked={selectedAuthors.includes(author)}
-                                                    onCheckedChange={() => handleAuthorChange(author)}
-                                                />
-                                                {author}
-                                            </Label>
-                                        ))}
+                                        {availableAuthors &&
+                                            availableAuthors.map((author) => (
+                                                <Label key={author} className='flex items-center gap-2 font-normal'>
+                                                    <Checkbox
+                                                        checked={selectedAuthors.includes(author)}
+                                                        onCheckedChange={() => handleAuthorChange(author)}
+                                                    />
+                                                    {author}
+                                                </Label>
+                                            ))}
                                     </div>
                                 </div>
                             </div>
@@ -147,47 +200,51 @@ export default function Component() {
                 )}
             </div>
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8'>
-                {currentBooks.map((book) => (
-                    <div key={book.id} className='bg-white dark:bg-gray-950 rounded-lg shadow-md overflow-hidden'>
-                        <Link to='#'>
-                            <img
-                                src='/placeholder.svg'
-                                alt={book.title}
-                                width={300}
-                                height={400}
-                                className='w-full h-[400px] object-cover'
-                            />
-                        </Link>
-                        <div className='p-4'>
-                            <h3 className='text-lg font-semibold mb-2'>
-                                <Link to='#'>{book.title}</Link>
-                            </h3>
-                            <p className='text-gray-500 dark:text-gray-400 mb-4'>{book.author}</p>
-                            <div className='flex items-center justify-between'>
-                                <p className='text-xl font-bold'>${book.price}</p>
-                                <Button onClick={() => handleAddToCart(book)}>Add to Cart</Button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-            <div className='flex justify-center mt-8'>
-                <Pagination>
-                    <PaginationContent>
-                        <PaginationItem>
-                            <PaginationPrevious onClick={() => setCurrentPage((prev) => prev - 1)} />
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink>{currentPage}</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationEllipsis />
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationNext onClick={() => setCurrentPage((prev) => prev + 1)} />
-                        </PaginationItem>
-                    </PaginationContent>
-                </Pagination>
+                {books.length
+                    ? books.map((book: Book, idx: number) => {
+                          return (
+                              <Card
+                                  ref={books.length === idx + 1 ? lastBookRef : null}
+                                  key={book.id}
+                                  className='w-full max-w-sm bg-white shadow-md rounded-lg overflow-hidden dark:bg-gray-900'
+                              >
+                                  <div>
+                                      <img
+                                          src={book.imageUrl}
+                                          alt='Book Cover'
+                                          width={400}
+                                          height={600}
+                                          className='w-full h-[400px] object-contain'
+                                      />
+                                  </div>
+                                  <div className='p-6 space-y-4'>
+                                      <div className='space-y-2'>
+                                          <h3 className='text-xl font-bold'>{book.title}</h3>
+                                          <div className='flex justify-between'>
+                                              <p className='text-gray-500 dark:text-gray-400'>{book.author}</p>
+                                              <div className='top-4 right-4 bg-green-900 text-white px-3 py-1 rounded-full text-sm'>
+                                                  ₹ {book.price}
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <div className='flex items-center justify-between text-sm text-gray-500 dark:text-gray-400'>
+                                          <div>
+                                              <BookIcon className='w-4 h-4 mr-1 inline' />
+                                              <span>{book.pages} pages</span>
+                                          </div>
+                                          <div>
+                                              <TagIcon className='w-4 h-4 mr-1 inline' />
+                                              <span>{book.category}</span>
+                                          </div>
+                                      </div>
+                                      <Button size='lg' className='w-full'>
+                                          Add to Cart
+                                      </Button>
+                                  </div>
+                              </Card>
+                          );
+                      })
+                    : 'No Books'}
             </div>
         </div>
     );

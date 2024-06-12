@@ -4,9 +4,9 @@ import { Book } from '../../../models/book';
 
 const createTestBook = async (title: string, author: string, category: string) => {
     const book = Book.build({
-        title: title,
-        author: author,
-        category: category,
+        title,
+        author,
+        category,
         imageUrl: 'http://example.com/image.jpg',
         pages: 100,
         price: 20,
@@ -96,12 +96,12 @@ it('filter books by category if filter query parameter is provided', async () =>
 
 it('filter books by author if author query parameter is provided', async () => {
     await createTestBook('Awesome Book', 'Author1', 'Category1');
-    await createTestBook('Another Great Book', 'Author2', 'Category2');
+    await createTestBook('Another Great Book', 'Author1', 'Category2');
     await createTestBook('Fantastic Book', 'Author3', 'Category3');
 
     const response = await request(app).get('/api/books').query({ author: 'Author1' }).send({});
 
-    expect(response.body.length).toEqual(1);
+    expect(response.body.length).toEqual(2);
     expect(response.body.map((book: any) => book.author)).toContain('Author1');
 });
 
@@ -112,7 +112,7 @@ it('returns default number of books per page if limit query parameter is not pro
 
     const response = await request(app).get('/api/books').query({ page: 1 }).send({});
 
-    expect(response.body.length).toEqual(3);
+    expect(response.body.length).toEqual(3); // Adjust based on default limit
 });
 
 it('returns correct books for specified page and limit', async () => {

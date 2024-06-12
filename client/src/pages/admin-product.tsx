@@ -1,21 +1,23 @@
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-import { Book, BookDataTable } from '@/components/book/data-table';
+import { BookDataTable } from '@/components/book/data-table';
 import { toast } from '@/components/ui/use-toast';
 import { BASE_URL } from '@/constants';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useAppDispatch } from '@/redux/store';
 import { setBooks } from '@/redux/book-slice';
 
 export default function AdminProductsPage() {
-    const [data, setData] = useState<Book[]>();
-
     const dispatch = useAppDispatch();
 
     async function fetchBooks() {
         try {
-            const { data } = await axios.get(`${BASE_URL}/books`);
+            const { data } = await axios.get(`${BASE_URL}/books`, {
+                params: {
+                    limit: 1000,
+                },
+            });
             dispatch(setBooks(data));
         } catch (error: any) {
             let errorMessage = 'There was a problem with your request.';

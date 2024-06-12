@@ -33,7 +33,7 @@ router.get('/api/books', async (req: Request<{}, {}, {}, BookQuery>, res: Respon
     if (req.query.search) {
         query['$or'] = [
             { title: { $regex: req.query.search, $options: 'i' } }, // Case-insensitive search by title
-            { author: { $regex: req.query.search, $options: 'i' } }, // Case-insensitive search by description
+            { author: { $regex: req.query.search, $options: 'i' } }, // Case-insensitive search by author
         ];
     }
 

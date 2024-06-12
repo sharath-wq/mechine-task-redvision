@@ -9,12 +9,10 @@ import { Provider } from 'react-redux';
 import { Toaster } from '@/components/ui/toaster';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
-        <Provider store={store}>
-            {/* <ErrorBoundary> */}
-            <App />
-            <Toaster />
-            {/* </ErrorBoundary> */}
-        </Provider>
-    </React.StrictMode>
+    <Provider store={store}>
+        {/* <ErrorBoundary> */}
+        <App />
+        <Toaster />
+        {/* </ErrorBoundary> */}
+    </Provider>
 );

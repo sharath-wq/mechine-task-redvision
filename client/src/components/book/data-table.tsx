@@ -26,7 +26,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Link } from 'react-router-dom';
-import DeleteModal from '../modal/delete';
+import DeleteModal from '../model/delete';
 import { useAppSelector } from '@/redux/store';
 
 export type Book = {

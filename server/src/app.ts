@@ -9,7 +9,14 @@ import { errorHandler } from './middleware/error-handler';
 import { currentUser } from './middleware/current-user';
 
 import { signupRouter, signinRouter, signoutRouter } from './routes/auth';
-import { createBookRouter, updateBookRouter, deleteBookRouter, getAllBooksRouter, getOneBookRouter } from './routes/book';
+import {
+    createBookRouter,
+    updateBookRouter,
+    deleteBookRouter,
+    getAllBooksRouter,
+    getOneBookRouter,
+    getBookOptionsRouter,
+} from './routes/book';
 import { updateCartRouter, viewCartRouter } from './routes/cart';
 
 const corsOptions = {
@@ -41,6 +48,7 @@ app.use(signupRouter);
 app.use(createBookRouter);
 app.use(updateBookRouter);
 app.use(deleteBookRouter);
+app.use(getBookOptionsRouter);
 app.use(getAllBooksRouter);
 app.use(getOneBookRouter);
 

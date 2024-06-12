@@ -20,9 +20,30 @@ const initialState: BookState = {
     books: [],
 };
 
+const loadState = () => {
+    try {
+        const serializedState = localStorage.getItem('bookState');
+        if (serializedState === null) {
+            return initialState;
+        }
+        return JSON.parse(serializedState);
+    } catch (err) {
+        return initialState;
+    }
+};
+
+const saveState = (state: BookState) => {
+    try {
+        const serializedState = JSON.stringify(state);
+        localStorage.setItem('bookState', serializedState);
+    } catch (err) {
+        console.log(err);
+    }
+};
+
 export const booksSlice = createSlice({
     name: 'books',
-    initialState: initialState,
+    initialState: loadState(),
     reducers: {
         setBooks: (state, action: PayloadAction<Book[]>) => {
             state.books = action.payload;
@@ -30,15 +51,16 @@ export const booksSlice = createSlice({
 
         addBook: (state, action: PayloadAction<Book>) => {
             state.books.push(action.payload);
+            saveState(state);
         },
 
         removeBook: (state, action: PayloadAction<string>) => {
-            state.books = state.books.filter((book) => book.id !== action.payload);
+            state.books = state.books.filter((book: Book) => book.id !== action.payload);
         },
 
         updateBook: (state, action: PayloadAction<{ id: string; updatedBook: Partial<Book> }>) => {
             const { id, updatedBook } = action.payload;
-            const bookIndex = state.books.findIndex((book) => book.id === id);
+            const bookIndex = state.books.findIndex((book: Book) => book.id === id);
             if (bookIndex !== -1) {
                 state.books[bookIndex] = { ...state.books[bookIndex], ...updatedBook };
             }
