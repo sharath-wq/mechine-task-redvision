@@ -8,6 +8,7 @@ interface BookAttrs {
     pages: number;
     category: string;
     imageUrl: string;
+    quantity: number;
 }
 
 // Interface that describes the properties that a book model has
@@ -23,6 +24,7 @@ export interface BookDoc extends mongoose.Document {
     pages: number;
     category: string;
     imageUrl: string;
+    quantity: number;
 }
 
 const bookSchema = new mongoose.Schema(
@@ -49,6 +51,10 @@ const bookSchema = new mongoose.Schema(
         },
         imageUrl: {
             type: String,
+            required: true,
+        },
+        quantity: {
+            type: Number,
             required: true,
         },
     },

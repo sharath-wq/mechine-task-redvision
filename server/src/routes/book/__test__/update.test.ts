@@ -35,6 +35,7 @@ it('returns a 404 if the book does not exist', async () => {
             pages: 100,
             category: 'category',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(404);
 });
@@ -48,6 +49,7 @@ it('returns an error if an invalid title is provided', async () => {
         pages: 100,
         category: 'category',
         imageUrl: 'http://example.com/image.jpg',
+        quantity: 10,
     });
     await book.save();
 
@@ -61,6 +63,7 @@ it('returns an error if an invalid title is provided', async () => {
             pages: 100,
             category: 'category',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 
@@ -73,6 +76,7 @@ it('returns an error if an invalid title is provided', async () => {
             pages: 100,
             category: 'category',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 });
@@ -86,6 +90,7 @@ it('returns an error if an invalid author is provided', async () => {
         pages: 100,
         category: 'category',
         imageUrl: 'http://example.com/image.jpg',
+        quantity: 10,
     });
     await book.save();
 
@@ -99,6 +104,7 @@ it('returns an error if an invalid author is provided', async () => {
             pages: 100,
             category: 'category',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 
@@ -111,6 +117,7 @@ it('returns an error if an invalid author is provided', async () => {
             pages: 100,
             category: 'category',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 });
@@ -124,6 +131,7 @@ it('returns an error if an invalid price is provided', async () => {
         pages: 100,
         category: 'category',
         imageUrl: 'http://example.com/image.jpg',
+        quantity: 10,
     });
     await book.save();
 
@@ -137,6 +145,7 @@ it('returns an error if an invalid price is provided', async () => {
             pages: 100,
             category: 'category',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 
@@ -149,6 +158,7 @@ it('returns an error if an invalid price is provided', async () => {
             pages: 100,
             category: 'category',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 });
@@ -162,6 +172,7 @@ it('returns an error if an invalid pages is provided', async () => {
         pages: 100,
         category: 'category',
         imageUrl: 'http://example.com/image.jpg',
+        quantity: 10,
     });
     await book.save();
 
@@ -175,6 +186,7 @@ it('returns an error if an invalid pages is provided', async () => {
             pages: -100,
             category: 'category',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 
@@ -187,6 +199,7 @@ it('returns an error if an invalid pages is provided', async () => {
             price: 10,
             category: 'category',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 });
@@ -200,6 +213,7 @@ it('returns an error if an invalid category is provided', async () => {
         pages: 100,
         category: 'category',
         imageUrl: 'http://example.com/image.jpg',
+        quantity: 10,
     });
     await book.save();
 
@@ -213,6 +227,7 @@ it('returns an error if an invalid category is provided', async () => {
             pages: 100,
             category: '',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 
@@ -225,6 +240,7 @@ it('returns an error if an invalid category is provided', async () => {
             price: 10,
             pages: 100,
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 });
@@ -238,6 +254,7 @@ it('returns an error if an invalid imageUrl is provided', async () => {
         pages: 100,
         category: 'category',
         imageUrl: 'http://example.com/image.jpg',
+        quantity: 10,
     });
     await book.save();
 
@@ -251,6 +268,7 @@ it('returns an error if an invalid imageUrl is provided', async () => {
             pages: 100,
             category: 'category',
             imageUrl: '',
+            quantity: 10,
         })
         .expect(400);
 
@@ -263,6 +281,7 @@ it('returns an error if an invalid imageUrl is provided', async () => {
             price: 10,
             pages: 100,
             category: 'category',
+            quantity: 10,
         })
         .expect(400);
 });
@@ -276,6 +295,7 @@ it('updates the book with valid inputs', async () => {
         pages: 100,
         category: 'category',
         imageUrl: 'http://example.com/image.jpg',
+        quantity: 10,
     });
     await book.save();
 
@@ -285,6 +305,7 @@ it('updates the book with valid inputs', async () => {
     const newPages = 200;
     const newCategory = 'new category';
     const newImageUrl = 'http://example.com/new-image.jpg';
+    const quantity = 10;
 
     await request(app)
         .put(`/api/books/${book.id}`)
@@ -296,6 +317,7 @@ it('updates the book with valid inputs', async () => {
             pages: newPages,
             category: newCategory,
             imageUrl: newImageUrl,
+            quantity: quantity,
         })
         .expect(200);
 

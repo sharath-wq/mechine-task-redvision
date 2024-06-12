@@ -1,13 +1,12 @@
 import { z } from 'zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CloudinaryUploadWidget from '../context/cld-ctx';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { BASE_URL, IMAGEUPLOADCONFIG } from '@/constants';
 import { Loader } from 'lucide-react';
 import axios from 'axios';
-
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -16,9 +15,10 @@ import { Label } from '@/components/ui/label';
 import { addProductValidation } from '@/lib/validations';
 import { toast } from '@/components/ui/use-toast';
 
-export default function AddProduct() {
+export default function EditProduct() {
     const [imageUrl, setImageUrl] = useState<string>('');
     const navigate = useNavigate();
+    const { id } = useParams();
 
     const form = useForm<z.infer<typeof addProductValidation>>({
         resolver: zodResolver(addProductValidation),
@@ -32,16 +32,52 @@ export default function AddProduct() {
         },
     });
 
+    const {
+        reset,
+        handleSubmit,
+        formState: { isSubmitting },
+    } = form;
+
+    useEffect(() => {
+        async function getBooks() {
+            try {
+                const { data } = await axios.get(`${BASE_URL}/books/${id}`);
+                setImageUrl(data.imageUrl);
+                reset(data);
+                /**
+                 * TODO: Fix defualt value not wokring
+                 */
+                form.setValue('category', data.category);
+            } catch (error: any) {
+                let errorMessage = 'There was a problem with your request.';
+
+                if (error.response && error.response.data.errors && error.response.data.errors.length > 0) {
+                    errorMessage = error.response.data.errors.map((err: { message: string }) => err.message).join(', ');
+                }
+
+                toast({
+                    variant: 'destructive',
+                    title: 'Uh oh! Something went wrong.',
+                    description: errorMessage,
+                });
+            }
+        }
+
+        if (id) {
+            getBooks();
+        }
+    }, [id, reset]);
+
     axios.defaults.withCredentials = true;
     async function onSubmit(values: z.infer<typeof addProductValidation>) {
         try {
-            await axios.post(`${BASE_URL}/books`, {
+            await axios.put(`${BASE_URL}/books/${id}`, {
                 ...values,
                 imageUrl,
             });
 
             toast({
-                description: 'new book added.',
+                description: 'Book updated successfully.',
             });
 
             navigate('/admin/products', { replace: true });
@@ -60,17 +96,13 @@ export default function AddProduct() {
         }
     }
 
-    const { isSubmitting } = form.formState;
-
     return (
         <div className='flex flex-col items-center justify-center h-[95%] px-4 py-8 bg-gray-100 dark:bg-gray-900'>
             <div className='w-full max-w-xl bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 md:p-8'>
-                <h1 className='text-2xl font-bold mb-4 dark:text-white'>Create New Product</h1>
-                <p className='text-gray-500 dark:text-gray-400 mb-6'>
-                    Fill out the form below to add a new product to your catalog.
-                </p>
+                <h1 className='text-2xl font-bold mb-4 dark:text-white'>Edit Product</h1>
+                <p className='text-gray-500 dark:text-gray-400 mb-6'>Fill out the form below to update the product.</p>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                    <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-1 md:grid-cols-2 gap-6'>
                         <div className='space-y-2'>
                             <FormField
                                 control={form.control}
@@ -195,7 +227,18 @@ export default function AddProduct() {
                                     </div>
                                 </div>
                             ) : (
-                                <img src={imageUrl} alt='Uploaded product' className='max-h-64 mx-auto' />
+                                <div className='flex flex-col justify-center gap-2 items-center'>
+                                    <img src={imageUrl} alt='Uploaded product' className='max-h-56 mx-auto' />
+                                    <Button
+                                        onClick={() => {
+                                            setImageUrl('');
+                                        }}
+                                        type='button'
+                                        variant={'destructive'}
+                                    >
+                                        Remove
+                                    </Button>
+                                </div>
                             )}
                         </div>
 

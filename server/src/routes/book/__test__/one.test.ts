@@ -10,6 +10,7 @@ const createTestBook = async (title: string, author: string, category: string) =
         imageUrl: 'http://example.com/image.jpg',
         pages: 100,
         price: 20,
+        quantity: 10,
     });
     await book.save();
     return book;
@@ -35,6 +36,7 @@ it('returns 404 if valid ID is provided but book is not found', async () => {
         imageUrl: 'http://example.com/image.jpg',
         pages: 100,
         price: 20,
+        quantity: 10,
     });
 
     const response = await request(app).get(`/api/books/${book.id}`).send();

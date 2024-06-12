@@ -10,6 +10,7 @@ const createTestBook = async (title: string, author: string, category: string) =
         imageUrl: 'http://example.com/image.jpg',
         pages: 100,
         price: 20,
+        quantity: 10,
     });
     await book.save();
     return book;

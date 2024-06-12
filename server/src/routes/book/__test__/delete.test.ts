@@ -37,6 +37,7 @@ it('deletes the book if it exists', async () => {
         pages: 100,
         category: 'category',
         imageUrl: 'http://example.com/image.jpg',
+        quantity: 10,
     });
     await book.save();
 
@@ -55,6 +56,7 @@ it('returns the deleted book details if it exists', async () => {
         pages: 100,
         category: 'category',
         imageUrl: 'http://example.com/image.jpg',
+        quantity: 10,
     });
     await book.save();
 

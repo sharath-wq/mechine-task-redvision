@@ -8,6 +8,11 @@ const validateBook = [
         .withMessage('Price must be a number greater than 0')
         .notEmpty()
         .withMessage('Price is required'),
+    body('quantity')
+        .isFloat({ gt: 0 })
+        .withMessage('Quantity must be a number greater than 0')
+        .notEmpty()
+        .withMessage('Quantity is required'),
     body('pages')
         .isInt({ gt: 0 })
         .withMessage('Pages must be an integer greater than 0')

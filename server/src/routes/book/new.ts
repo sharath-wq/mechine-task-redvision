@@ -8,7 +8,7 @@ import { requireAuth } from '../../middleware/require-auth';
 const router = express.Router();
 
 router.post('/api/books', requireAuth, requireAdmin, validateBook, validateRequest, async (req: Request, res: Response) => {
-    const { author, category, imageUrl, pages, price, title } = req.body;
+    const { author, category, imageUrl, pages, price, title, quantity } = req.body;
 
     const book = Book.build({
         author,
@@ -17,6 +17,7 @@ router.post('/api/books', requireAuth, requireAdmin, validateBook, validateReque
         pages,
         price,
         title,
+        quantity,
     });
 
     await book.save();

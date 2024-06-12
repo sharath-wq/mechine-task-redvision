@@ -49,6 +49,7 @@ it('returns an error if an invalid title is provided', async () => {
             pages: 100,
             category: 'Fiction',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 });
@@ -66,6 +67,7 @@ it('returns an error if an invalid author is provided', async () => {
             pages: 100,
             category: 'Fiction',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 
@@ -78,6 +80,7 @@ it('returns an error if an invalid author is provided', async () => {
             pages: 100,
             category: 'Fiction',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 });
@@ -95,6 +98,7 @@ it('returns an error if an invalid price is provided', async () => {
             pages: 100,
             category: 'Fiction',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 
@@ -106,6 +110,7 @@ it('returns an error if an invalid price is provided', async () => {
             author: 'Author',
             pages: 100,
             category: 'Fiction',
+            quantity: 10,
             imageUrl: 'http://example.com/image.jpg',
         })
         .expect(400);
@@ -124,6 +129,7 @@ it('returns an error if an invalid pages is provided', async () => {
             pages: -100,
             category: 'Fiction',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 
@@ -136,6 +142,7 @@ it('returns an error if an invalid pages is provided', async () => {
             price: 10,
             category: 'Fiction',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 });
@@ -153,6 +160,7 @@ it('returns an error if an invalid category is provided', async () => {
             pages: 100,
             category: '',
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 
@@ -165,6 +173,7 @@ it('returns an error if an invalid category is provided', async () => {
             price: 10,
             pages: 100,
             imageUrl: 'http://example.com/image.jpg',
+            quantity: 10,
         })
         .expect(400);
 });
@@ -182,6 +191,7 @@ it('returns an error if an invalid imageUrl is provided', async () => {
             pages: 100,
             category: 'Fiction',
             imageUrl: '',
+            quantity: 10,
         })
         .expect(400);
 
@@ -194,6 +204,7 @@ it('returns an error if an invalid imageUrl is provided', async () => {
             price: 10,
             pages: 100,
             category: 'Fiction',
+            quantity: 10,
         })
         .expect(400);
 });
@@ -209,6 +220,7 @@ it('creates a book with valid inputs', async () => {
     const pages = 200;
     const category = 'Fiction';
     const imageUrl = 'http://example.com/image.jpg';
+    const quantity = 10;
 
     const response = await request(app)
         .post('/api/books')
@@ -220,6 +232,7 @@ it('creates a book with valid inputs', async () => {
             pages,
             category,
             imageUrl,
+            quantity,
         })
         .expect(201);
 
