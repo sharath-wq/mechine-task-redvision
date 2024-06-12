@@ -28,6 +28,7 @@ router.post('/api/users/signin', validateLogin, validateRequest, async (req: Req
         {
             id: existingUser._id,
             name: existingUser.name,
+            role: existingUser.role,
             email: existingUser.email,
         },
         process.env.JWT_KEY!

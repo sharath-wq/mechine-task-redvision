@@ -13,7 +13,7 @@ import { createBookRouter, updateBookRouter, deleteBookRouter, getAllBooksRouter
 import { updateCartRouter, viewCartRouter } from './routes/cart';
 
 const corsOptions = {
-    origin: 'http://localhost:5173',
+    origin: true,
     credentials: true,
 };
 
@@ -25,7 +25,7 @@ app.use(cors(corsOptions));
 app.use(
     cookieSession({
         signed: false,
-        secure: process.env.NODE_ENV !== 'test',
+        secure: false,
         // sameSite: 'none',
     })
 );

@@ -97,4 +97,18 @@ export const books = [
     },
 ];
 
+export const CLOUDNAME = import.meta.env.VITE_CLOUDNAME;
+export const cloudinaryUploadPreset = import.meta.env.VITE_UPLOADPRESET;
+export const IMAGEUPLOADCONFIG = {
+    cloudName: CLOUDNAME,
+    uploadPreset: cloudinaryUploadPreset,
+    resourceType: 'image',
+    cropping: true,
+    croppingCoordinatesMode: 'custom',
+    croppingAspectRatio: 2 / 3,
+    croppingDefaultSelectionRatio: 100 / 150,
+    showSkipCropButton: false,
+    clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+};
+
 export const BASE_URL = 'http://localhost:3000/api';

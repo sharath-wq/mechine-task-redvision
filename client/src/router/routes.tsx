@@ -9,6 +9,7 @@ import CartPage from '@/pages/cart';
 import OrderPage from '@/pages/orders';
 import AdminProductsPage from '@/pages/admin-product';
 import AdminOrdersPage from '@/pages/admin-orders';
+import AddProduct from '@/pages/add-product';
 
 export default function Router() {
     return (
@@ -27,6 +28,7 @@ export default function Router() {
             <Route path='' element={<AdminRoutes />}>
                 <Route path='/admin/products' element={<AdminProductsPage />} />
                 <Route path='/admin/orders' element={<AdminOrdersPage />} />
+                <Route path='/admin/product/add' element={<AddProduct />} />
             </Route>
 
             <Route path='*' element={<NotfoundPage />} />

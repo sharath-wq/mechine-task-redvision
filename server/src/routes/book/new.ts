@@ -3,10 +3,11 @@ import { Book } from '../../models/book';
 import { requireAdmin } from '../../middleware/require-admin';
 import { validateRequest } from '../../middleware/validate-request';
 import { validateBook } from '../../middleware/book-validator';
+import { requireAuth } from '../../middleware/require-auth';
 
 const router = express.Router();
 
-router.post('/api/books', requireAdmin, validateBook, validateRequest, async (req: Request, res: Response) => {
+router.post('/api/books', requireAuth, requireAdmin, validateBook, validateRequest, async (req: Request, res: Response) => {
     const { author, category, imageUrl, pages, price, title } = req.body;
 
     const book = Book.build({
