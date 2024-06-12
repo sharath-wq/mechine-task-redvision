@@ -15,10 +15,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { addProductValidation } from '@/lib/validations';
 import { toast } from '@/components/ui/use-toast';
+import { useAppDispatch } from '@/redux/store';
+import { addBook } from '@/redux/book-slice';
 
 export default function AddProduct() {
     const [imageUrl, setImageUrl] = useState<string>('');
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
     const form = useForm<z.infer<typeof addProductValidation>>({
         resolver: zodResolver(addProductValidation),
@@ -35,10 +38,12 @@ export default function AddProduct() {
     axios.defaults.withCredentials = true;
     async function onSubmit(values: z.infer<typeof addProductValidation>) {
         try {
-            await axios.post(`${BASE_URL}/books`, {
+            const { data } = await axios.post(`${BASE_URL}/books`, {
                 ...values,
                 imageUrl,
             });
+
+            dispatch(addBook(data));
 
             toast({
                 description: 'new book added.',
@@ -195,7 +200,7 @@ export default function AddProduct() {
                                     </div>
                                 </div>
                             ) : (
-                                <img src={imageUrl} alt='Uploaded product' className='max-h-64 mx-auto' />
+                                <img src={imageUrl} alt='Uploaded product' className='max-h-44 mx-auto' />
                             )}
                         </div>
 

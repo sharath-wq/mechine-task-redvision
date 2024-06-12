@@ -14,11 +14,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { addProductValidation } from '@/lib/validations';
 import { toast } from '@/components/ui/use-toast';
+import { useAppDispatch } from '@/redux/store';
+import { updateBook } from '@/redux/book-slice';
 
 export default function EditProduct() {
     const [imageUrl, setImageUrl] = useState<string>('');
     const navigate = useNavigate();
     const { id } = useParams();
+    const dispatch = useAppDispatch();
 
     const form = useForm<z.infer<typeof addProductValidation>>({
         resolver: zodResolver(addProductValidation),
@@ -71,10 +74,12 @@ export default function EditProduct() {
     axios.defaults.withCredentials = true;
     async function onSubmit(values: z.infer<typeof addProductValidation>) {
         try {
-            await axios.put(`${BASE_URL}/books/${id}`, {
+            const { data } = await axios.put(`${BASE_URL}/books/${id}`, {
                 ...values,
                 imageUrl,
             });
+
+            dispatch(updateBook(data));
 
             toast({
                 description: 'Book updated successfully.',
@@ -228,7 +233,7 @@ export default function EditProduct() {
                                 </div>
                             ) : (
                                 <div className='flex flex-col justify-center gap-2 items-center'>
-                                    <img src={imageUrl} alt='Uploaded product' className='max-h-56 mx-auto' />
+                                    <img src={imageUrl} alt='Uploaded product' className='max-h-44 mx-auto' />
                                     <Button
                                         onClick={() => {
                                             setImageUrl('');
