@@ -5,15 +5,30 @@ import Confetti from 'react-confetti';
 
 export default function OrderPlacedPage() {
     const [showConfetti, setShowConfetti] = useState(true);
+    const [windowDimensions, setWindowDimensions] = useState({
+        width: window.innerWidth,
+        height: window.innerHeight,
+    });
 
     useEffect(() => {
         const timer = setTimeout(() => setShowConfetti(false), 5000);
         return () => clearTimeout(timer);
     }, []);
 
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowDimensions({
+                width: window.innerWidth,
+                height: window.innerHeight,
+            });
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     return (
-        <div className='flex flex-col items-center justify-center h-[95%] px-4 py-8 mt-52 dark:bg-gray-900'>
-            {showConfetti && <Confetti />}
+        <div className='flex flex-col items-center justify-center h-screen px-4 py-8 dark:bg-gray-900'>
+            {showConfetti && <Confetti width={windowDimensions.width} height={windowDimensions.height} />}
             <div className='relative w-full max-w-md px-4 py-12 bg-white rounded-lg shadow-lg dark:bg-gray-800'>
                 <div className='absolute inset-0 pointer-events-none' />
                 <div className='flex flex-col items-center space-y-4'>

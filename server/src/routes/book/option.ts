@@ -8,13 +8,13 @@ router.get('/api/books/options', async (req: Request, res: Response) => {
     try {
         const distinctCategoriesResult = await Book.aggregate([
             { $group: { _id: '$category' } },
-            { $sample: { size: 10 } },
+            { $sample: { size: 5 } },
             { $project: { _id: 0, category: '$_id' } }, // Reshape the document
         ]);
 
         const distinctAuthorsResult = await Book.aggregate([
             { $group: { _id: '$author' } },
-            { $sample: { size: 10 } },
+            { $sample: { size: 5 } },
             { $project: { _id: 0, author: '$_id' } }, // Reshape the document
         ]);
 
