@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { BookIcon, LogOut, ShoppingCartIcon } from 'lucide-react';
+import { BookIcon, LogOut, ShoppingCartIcon, UserCog } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import {
@@ -15,9 +15,12 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { BASE_URL } from '@/constants';
 import { toast } from '@/components/ui/use-toast';
 import { clearUser } from '@/redux/user-slice';
+import { useAppSelector } from '@/redux/store';
 
 export default function Navbar() {
     const dispatch = useDispatch();
+
+    const user = useAppSelector((state) => state.user);
 
     const handleLogOut = async () => {
         try {
@@ -50,6 +53,15 @@ export default function Navbar() {
                 <span className='text-lg font-semibold'>Book Store</span>
             </Link>
             <div className='flex items-center gap-4'>
+                {user.role === 'admin' && (
+                    <Link
+                        to={'/admin/products'}
+                        className='relative flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-100 rounded-full px-5 py-2'
+                    >
+                        <UserCog className='h-4 w-4' />
+                        <span>Admin Mode</span>
+                    </Link>
+                )}
                 <Link to={'/cart'} className='relative'>
                     <ShoppingCartIcon className='h-8 w-8' />
                     <Badge className='absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white'>
