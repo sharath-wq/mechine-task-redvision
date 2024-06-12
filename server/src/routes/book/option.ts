@@ -6,8 +6,21 @@ const router = express.Router();
 
 router.get('/api/books/options', async (req: Request, res: Response) => {
     try {
-        const distinctCategories = await Book.distinct('category');
-        const distinctAuthors = await Book.distinct('author');
+        const distinctCategoriesResult = await Book.aggregate([
+            { $group: { _id: '$category' } },
+            { $sample: { size: 10 } },
+            { $project: { _id: 0, category: '$_id' } }, // Reshape the document
+        ]);
+
+        const distinctAuthorsResult = await Book.aggregate([
+            { $group: { _id: '$author' } },
+            { $sample: { size: 10 } },
+            { $project: { _id: 0, author: '$_id' } }, // Reshape the document
+        ]);
+
+        const distinctCategories = distinctCategoriesResult.map((doc) => doc.category);
+        const distinctAuthors = distinctAuthorsResult.map((doc) => doc.author);
+
         res.send({
             categories: distinctCategories,
             authors: distinctAuthors,

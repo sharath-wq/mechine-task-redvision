@@ -97,6 +97,25 @@ export const books = [
     },
 ];
 
+export const categories = [
+    { value: 'literary-fiction', label: 'Literary Fiction' },
+    { value: 'historical-fiction', label: 'Historical Fiction' },
+    { value: 'science-fiction', label: 'Science Fiction' },
+    { value: 'fantasy', label: 'Fantasy' },
+    { value: 'mystery-thriller', label: 'Mystery/Thriller' },
+    { value: 'romance', label: 'Romance' },
+    { value: 'horror', label: 'Horror' },
+    { value: 'biography-autobiography', label: 'Biography/Autobiography' },
+    { value: 'memoir', label: 'Memoir' },
+    { value: 'self-help', label: 'Self-Help' },
+    { value: 'history', label: 'History' },
+    { value: 'science', label: 'Science' },
+    { value: 'true-crime', label: 'True Crime' },
+    { value: 'travel', label: 'Travel' },
+    { value: 'young-adult', label: 'Young Adult (YA)' },
+    { value: 'graphic-novels-comics', label: 'Graphic Novels and Comics' },
+];
+
 export const CLOUDNAME = import.meta.env.VITE_CLOUDNAME;
 export const cloudinaryUploadPreset = import.meta.env.VITE_UPLOADPRESET;
 export const IMAGEUPLOADCONFIG = {

@@ -44,9 +44,9 @@ export default function Component() {
         updateCart(cartItems);
     }, [cartItems]);
 
-    // Fetch books from the backend
     async function fetchBooks() {
         try {
+            setIsLoading(true);
             const { data } = await axios.get(`${BASE_URL}/books`, {
                 params: {
                     search: searchTerm ? searchTerm : null,
@@ -66,6 +66,8 @@ export default function Component() {
             setHasMore(data.length > 0);
         } catch (error: any) {
             handleErrorResponse(error);
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -137,7 +139,7 @@ export default function Component() {
     const observer = useRef<IntersectionObserver>();
     const lastBookRef = useCallback(
         (node: HTMLDivElement | null) => {
-            if (isLoading || isLoadingMore) return;
+            if (isLoading || isLoadingMore || isLoading) return; // Check for isLoadingData
             if (observer.current) observer.current.disconnect();
             observer.current = new IntersectionObserver((entries) => {
                 if (entries[0].isIntersecting && hasMore) {
@@ -146,7 +148,7 @@ export default function Component() {
             });
             if (node) observer.current.observe(node);
         },
-        [isLoading, isLoadingMore, hasMore]
+        [isLoading, isLoadingMore, isLoading, hasMore]
     );
 
     return (
@@ -217,56 +219,70 @@ export default function Component() {
                 )}
             </div>
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8'>
-                {books.length
-                    ? books.map((book: Book, idx: number) => {
-                          return (
-                              <Card
-                                  ref={books.length === idx + 1 ? lastBookRef : null}
-                                  key={book.id}
-                                  className='w-full max-w-sm bg-white shadow-md rounded-lg overflow-hidden dark:bg-gray-900'
-                              >
-                                  <Link to={`/book/${book.id}`}>
-                                      <img
-                                          src={book.imageUrl}
-                                          alt='Book Cover'
-                                          width={400}
-                                          height={600}
-                                          className='w-full h-[400px] object-contain'
-                                      />
-                                  </Link>
-                                  <div className='p-6 space-y-4'>
-                                      <div className='space-y-2'>
-                                          <h3 className='text-xl font-bold'>{book.title}</h3>
-                                          <div className='flex justify-between'>
-                                              <p className='text-gray-500 dark:text-gray-400'>{book.author}</p>
-                                              <div className='top-4 right-4 bg-green-900 text-white px-3 py-1 rounded-full text-sm'>
-                                                  ₹ {book.price}
-                                              </div>
-                                          </div>
-                                      </div>
-                                      <div className='flex items-center justify-between text-sm text-gray-500 dark:text-gray-400'>
-                                          <div>
-                                              <BookIcon className='w-4 h-4 mr-1 inline' />
-                                              <span>{book.pages} pages</span>
-                                          </div>
-                                          <div>
-                                              <TagIcon className='w-4 h-4 mr-1 inline' />
-                                              <span>{book.category}</span>
-                                          </div>
-                                      </div>
-                                      <Button
-                                          type='button'
-                                          onClick={() => handleAddToCart(book.id, book.price)}
-                                          size='lg'
-                                          className='w-full'
-                                      >
-                                          Add to Cart
-                                      </Button>
-                                  </div>
-                              </Card>
-                          );
-                      })
-                    : 'No Books'}
+                {books.map((book: Book, idx: number) => {
+                    return (
+                        <Card
+                            ref={books.length === idx + 1 ? lastBookRef : null}
+                            key={book.id}
+                            className='w-full max-w-sm bg-white shadow-md rounded-lg overflow-hidden dark:bg-gray-900'
+                        >
+                            <Link to={`/book/${book.id}`}>
+                                <img
+                                    src={book.imageUrl}
+                                    alt='Book Cover'
+                                    width={400}
+                                    height={600}
+                                    className='w-full h-[400px] object-contain'
+                                />
+                            </Link>
+                            <div className='p-6 space-y-4'>
+                                <div className='space-y-2'>
+                                    <h3 className='text-xl font-bold'>
+                                        {book.title.length > 20 ? book.title.substring(0, 20) + '...' : book.title}
+                                    </h3>
+                                    <div className='flex justify-between'>
+                                        <p className='text-gray-500 dark:text-gray-400'>{book.author}</p>
+                                        <div className='top-4 right-4 bg-green-900 text-white px-3 py-1 rounded-full text-sm'>
+                                            ₹ {book.price}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='flex items-center justify-between text-sm text-gray-500 dark:text-gray-400'>
+                                    <div>
+                                        <BookIcon className='w-4 h-4 mr-1 inline' />
+                                        <span>{book.pages} pages</span>
+                                    </div>
+                                    <div>
+                                        <TagIcon className='w-4 h-4 mr-1 inline' />
+                                        <span>{book.category}</span>
+                                    </div>
+                                </div>
+                                <Button
+                                    type='button'
+                                    onClick={() => handleAddToCart(book.id, book.price)}
+                                    size='lg'
+                                    className='w-full'
+                                >
+                                    Add to Cart
+                                </Button>
+                            </div>
+                        </Card>
+                    );
+                })}
+                {isLoading &&
+                    [...Array(3)].map((_, index) => (
+                        <div
+                            key={index}
+                            className='w-full max-w-sm bg-gray-200 animate-pulse rounded-lg overflow-hidden dark:bg-gray-800'
+                        >
+                            <div className='w-full h-[400px] bg-gray-300 dark:bg-gray-700' />
+                            <div className='p-6 space-y-4'>
+                                <div className='w-3/4 h-6 bg-gray-300 dark:bg-gray-700' />
+                                <div className='w-1/2 h-4 bg-gray-300 dark:bg-gray-700' />
+                                <div className='w-full h-4 bg-gray-300 dark:bg-gray-700' />
+                            </div>
+                        </div>
+                    ))}
             </div>
         </div>
     );
