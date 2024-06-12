@@ -18,6 +18,7 @@ import {
     getBookOptionsRouter,
 } from './routes/book';
 import { updateCartRouter, viewCartRouter } from './routes/cart';
+import { createOrderRouter, viewOrdersRouter } from './routes/orders';
 
 const corsOptions = {
     origin: true,
@@ -55,6 +56,10 @@ app.use(getOneBookRouter);
 // cart routes
 app.use(updateCartRouter);
 app.use(viewCartRouter);
+
+// order routes
+app.use(createOrderRouter);
+app.use(viewOrdersRouter);
 
 // Not found hanlder
 app.all('*', async () => {

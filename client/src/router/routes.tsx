@@ -12,6 +12,7 @@ import AdminOrdersPage from '@/pages/admin-orders';
 import AddProduct from '@/pages/add-product';
 import EditProduct from '@/pages/editProduct';
 import BookPage from '@/pages/book-view';
+import OrderPlacedPage from '@/pages/order-placed';
 
 export default function Router() {
     return (
@@ -21,6 +22,7 @@ export default function Router() {
                 <Route path='/cart' element={<CartPage />} />
                 <Route path='/orders' element={<OrderPage />} />
                 <Route path='/book/:id' element={<BookPage />} />
+                <Route path='/order/placed' element={<OrderPlacedPage />} />
             </Route>
 
             <Route path='' element={<PublicRoutes />}>

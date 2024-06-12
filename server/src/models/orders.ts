@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 // Interface that describes the properties for creating an order item
-interface OrderItem {
+export interface OrderItem {
     productId: mongoose.Types.ObjectId;
     quantity: number;
     price: number;
@@ -12,8 +12,8 @@ interface OrderAttrs {
     userId: mongoose.Types.ObjectId;
     items: OrderItem[];
     totalPrice: number;
-    status: string;
-    orderDate: Date;
+    status?: string;
+    orderDate?: Date;
 }
 
 // Interface that describes the properties that an order model has
@@ -26,8 +26,8 @@ interface OrderDoc extends mongoose.Document {
     userId: mongoose.Types.ObjectId;
     items: OrderItem[];
     totalPrice: number;
-    status: string;
-    orderDate: Date;
+    status?: string;
+    orderDate?: Date;
 }
 
 const orderItemSchema = new mongoose.Schema(

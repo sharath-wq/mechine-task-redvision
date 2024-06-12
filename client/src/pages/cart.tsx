@@ -5,8 +5,9 @@ import axios from 'axios';
 import { BASE_URL } from '@/constants';
 import { toast } from '@/components/ui/use-toast';
 import { useAppDispatch, useAppSelector } from '@/redux/store';
-import { removeItem, updateItem } from '@/redux/cart-slice';
+import { clearCart, removeItem, updateItem } from '@/redux/cart-slice';
 import { updateCart } from '@/api/cart';
+import { useNavigate } from 'react-router-dom';
 
 interface Cart {
     userId: string;
@@ -38,6 +39,7 @@ export default function CartPage() {
     const cartItems = useAppSelector((state) => state.cart.items);
 
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     async function fetchCart() {
         try {
@@ -89,6 +91,28 @@ export default function CartPage() {
 
     const total = cart?.items.reduce((acc, book) => acc + book.price * book.quantity, 0) || 0;
 
+    async function handleCheckout() {
+        try {
+            await axios.post(`${BASE_URL}/orders`);
+
+            dispatch(clearCart());
+
+            navigate('/order/placed', { replace: true });
+        } catch (error: any) {
+            let errorMessage = 'There was a problem with your request.';
+
+            if (error.response && error.response.data.errors && error.response.data.errors.length > 0) {
+                errorMessage = error.response.data.errors.map((err: { message: string }) => err.message).join(', ');
+            }
+
+            toast({
+                variant: 'destructive',
+                title: 'Uh oh! Something went wrong.',
+                description: errorMessage,
+            });
+        }
+    }
+
     return (
         <section className='w-full py-12'>
             <div className='container grid gap-6 md:gap-8 px-4 md:px-6 max-w-4xl mx-auto'>
@@ -131,7 +155,7 @@ export default function CartPage() {
                                         <PlusIcon className='h-4 w-4' />
                                     </Button>
                                 </div>
-                                <div className='text-lg font-semibold'>${(book.price * book.quantity).toFixed(2)}</div>
+                                <div className='text-lg font-semibold'>₹{(book.price * book.quantity).toFixed(2)}</div>
                                 <Button
                                     variant='outline'
                                     size='icon'
@@ -144,15 +168,19 @@ export default function CartPage() {
                         </div>
                     ))}
                 </div>
-                <div className='grid gap-4 md:gap-6 border-t pt-6 md:pt-8'>
-                    <div className='flex items-center justify-between'>
-                        <p className='text-lg font-semibold'>Total</p>
-                        <p className='text-2xl font-bold'>${total.toFixed(2)}</p>
+                {cart?.items.length ? (
+                    <div className='grid gap-4 md:gap-6 border-t pt-6 md:pt-8'>
+                        <div className='flex items-center justify-between'>
+                            <p className='text-lg font-semibold'>Total</p>
+                            <p className='text-2xl font-bold'>₹{total.toFixed(2)}</p>
+                        </div>
+                        <Button type='button' onClick={handleCheckout} size='lg' className='w-full'>
+                            Proceed to Checkout
+                        </Button>
                     </div>
-                    <Button size='lg' className='w-full'>
-                        Proceed to Checkout
-                    </Button>
-                </div>
+                ) : (
+                    'No items'
+                )}
             </div>
         </section>
     );
