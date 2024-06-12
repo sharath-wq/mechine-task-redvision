@@ -26,7 +26,7 @@ router.get('/api/books', async (req: Request<{}, {}, {}, BookQuery>, res: Respon
 
     // Pagination
     const page = parseInt(req.query.page as string) || 1; // Default to page 1 if not specified
-    const limit = parseInt(req.query.limit as string) || 10; // Default limit to 10 if not specified
+    const limit = parseInt(req.query.limit as string) || 4; // Default limit to 10 if not specified
     const skip = (page - 1) * limit;
 
     // Searching by title or author

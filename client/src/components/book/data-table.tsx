@@ -130,7 +130,9 @@ export const columns: ColumnDef<Book>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align='end'>
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem className='flex justify-center'>View details</DropdownMenuItem>
+                        <DropdownMenuItem className='flex justify-center'>
+                            <Link to={`/admin/book/${book.id}`}>View details</Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem className='flex justify-center'>
                             <Link to={`/admin/product/${book.id}`}>Edit</Link>
                         </DropdownMenuItem>

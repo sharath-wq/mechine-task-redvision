@@ -13,6 +13,7 @@ import { toast } from '@/components/ui/use-toast';
 import { Book } from '@/components/book/data-table';
 import { Card } from '@/components/ui/card';
 import useDebounce from '@/lib/debounce';
+import { Link } from 'react-router-dom';
 
 export default function Component() {
     const [searchTerm, setSearchTerm] = useState<string>('');
@@ -208,7 +209,7 @@ export default function Component() {
                                   key={book.id}
                                   className='w-full max-w-sm bg-white shadow-md rounded-lg overflow-hidden dark:bg-gray-900'
                               >
-                                  <div>
+                                  <Link to={`/book/${book.id}`}>
                                       <img
                                           src={book.imageUrl}
                                           alt='Book Cover'
@@ -216,7 +217,7 @@ export default function Component() {
                                           height={600}
                                           className='w-full h-[400px] object-contain'
                                       />
-                                  </div>
+                                  </Link>
                                   <div className='p-6 space-y-4'>
                                       <div className='space-y-2'>
                                           <h3 className='text-xl font-bold'>{book.title}</h3>

@@ -11,6 +11,7 @@ import AdminProductsPage from '@/pages/admin-product';
 import AdminOrdersPage from '@/pages/admin-orders';
 import AddProduct from '@/pages/add-product';
 import EditProduct from '@/pages/editProduct';
+import BookPage from '@/pages/book-view';
 
 export default function Router() {
     return (
@@ -19,6 +20,7 @@ export default function Router() {
                 <Route path='/' element={<HomePage />} />
                 <Route path='/cart' element={<CartPage />} />
                 <Route path='/orders' element={<OrderPage />} />
+                <Route path='/book/:id' element={<BookPage />} />
             </Route>
 
             <Route path='' element={<PublicRoutes />}>
@@ -31,6 +33,7 @@ export default function Router() {
                 <Route path='/admin/orders' element={<AdminOrdersPage />} />
                 <Route path='/admin/product/add' element={<AddProduct />} />
                 <Route path='/admin/product/:id' element={<EditProduct />} />
+                <Route path='/admin/book/:id' element={<BookPage />} />
             </Route>
 
             <Route path='*' element={<NotfoundPage />} />

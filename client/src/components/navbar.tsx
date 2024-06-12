@@ -56,10 +56,10 @@ export default function Navbar() {
                 {user.role === 'admin' && (
                     <Link
                         to={'/admin/products'}
-                        className='relative flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-100 rounded-full px-5 py-2'
+                        className='relative flex items-center justify-center gap-1 bg-gray-200 hover:bg-gray-100 rounded-full px-3 py-1'
                     >
-                        <UserCog className='h-4 w-4' />
-                        <span>Admin Mode</span>
+                        <UserCog className='h-3 w-3' />
+                        <span className='text-sm'>Admin Mode</span>
                     </Link>
                 )}
                 <Link to={'/cart'} className='relative'>
