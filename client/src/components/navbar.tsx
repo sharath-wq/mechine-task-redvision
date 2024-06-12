@@ -21,6 +21,7 @@ export default function Navbar() {
     const dispatch = useDispatch();
 
     const user = useAppSelector((state) => state.user);
+    const cartLength = useAppSelector((state) => state.cart.items.length);
 
     const handleLogOut = async () => {
         try {
@@ -65,7 +66,7 @@ export default function Navbar() {
                 <Link to={'/cart'} className='relative'>
                     <ShoppingCartIcon className='h-8 w-8' />
                     <Badge className='absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white'>
-                        3
+                        {cartLength}
                     </Badge>
                 </Link>
                 <DropdownMenu>

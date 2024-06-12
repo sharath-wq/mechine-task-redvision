@@ -1,7 +1,10 @@
+import { updateCart } from '@/api/cart';
 import { Book } from '@/components/book/data-table';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { BASE_URL } from '@/constants';
+import { addItem } from '@/redux/cart-slice';
+import { useAppDispatch, useAppSelector } from '@/redux/store';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
@@ -11,6 +14,23 @@ export default function BookPage() {
     const { pathname } = useLocation();
 
     const [book, setBook] = useState<Book>();
+    const cartItems = useAppSelector((state) => state.cart.items);
+
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        updateCart(cartItems);
+    }, [cartItems]);
+
+    const handleAddToCart = (id: string, price: number, quantity = 1) => {
+        dispatch(
+            addItem({
+                productId: id,
+                quantity: quantity,
+                price: price,
+            })
+        );
+    };
 
     async function getBooks() {
         try {
@@ -68,7 +88,12 @@ export default function BookPage() {
                     </div>
                     {pathname.split('/')[1] !== 'admin' && (
                         <div className='flex gap-4'>
-                            <Button size='lg' className='w-full'>
+                            <Button
+                                type='button'
+                                onClick={() => handleAddToCart(book!.id, book!.price)}
+                                size='lg'
+                                className='w-full'
+                            >
                                 Add to Cart
                             </Button>
                         </div>

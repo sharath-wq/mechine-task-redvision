@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { NotFoundError } from '../../errors/not-found-error';
 import { requireAuth } from '../../middleware/require-auth';
-import { Cart, CartItem } from '../../models/cart';
+import { Cart } from '../../models/cart';
 import { validateCart } from '../../middleware/cart-validator';
 import { validateRequest } from '../../middleware/validate-request';
 

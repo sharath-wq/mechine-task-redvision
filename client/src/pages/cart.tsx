@@ -1,55 +1,93 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { MinusIcon, PlusIcon, TrashIcon } from 'lucide-react';
+import axios from 'axios';
+import { BASE_URL } from '@/constants';
+import { toast } from '@/components/ui/use-toast';
+import { useAppDispatch, useAppSelector } from '@/redux/store';
+import { removeItem, updateItem } from '@/redux/cart-slice';
+import { updateCart } from '@/api/cart';
 
-interface Book {
-    id: number;
-    image: string;
+interface Cart {
+    userId: string;
+    items: Item[];
+    totalPrice: number;
+    id: string;
+}
+
+interface Item {
+    productId: Product;
+    quantity: number;
+    price: number;
+}
+
+interface Product {
     title: string;
     author: string;
     price: number;
+    pages: number;
+    category: string;
+    imageUrl: string;
     quantity: number;
+    id: string;
 }
 
 export default function CartPage() {
-    const books: Book[] = [
-        {
-            id: 1,
-            image: '/placeholder.svg',
-            title: 'The Great Gatsby',
-            author: 'F. Scott Fitzgerald',
-            price: 14.99,
-            quantity: 1,
-        },
-        {
-            id: 2,
-            image: '/placeholder.svg',
-            title: 'To Kill a Mockingbird',
-            author: 'Harper Lee',
-            price: 12.99,
-            quantity: 2,
-        },
-        {
-            id: 3,
-            image: '/placeholder.svg',
-            title: '1984',
-            author: 'George Orwell',
-            price: 9.99,
-            quantity: 1,
-        },
-    ];
+    const [cart, setCart] = useState<Cart>();
 
-    const [cart, setCart] = useState<Book[]>(books);
+    const cartItems = useAppSelector((state) => state.cart.items);
 
-    const handleRemoveFromCart = (id: number) => {
-        setCart(cart.filter((book) => book.id !== id));
+    const dispatch = useAppDispatch();
+
+    async function fetchCart() {
+        try {
+            const { data } = await axios.get(`${BASE_URL}/cart`);
+            setCart(data);
+        } catch (error: any) {
+            let errorMessage = 'There was a problem with your request.';
+
+            if (error.response && error.response.data.errors && error.response.data.errors.length > 0) {
+                errorMessage = error.response.data.errors.map((err: { message: string }) => err.message).join(', ');
+            }
+
+            toast({
+                variant: 'destructive',
+                title: 'Uh oh! Something went wrong.',
+                description: errorMessage,
+            });
+        }
+    }
+
+    useEffect(() => {
+        fetchCart();
+    }, []);
+
+    const handleRemoveFromCart = (id: string) => {
+        setCart((prevCart) => {
+            if (!prevCart) return prevCart;
+            const updatedItems = prevCart.items.filter((item) => item.productId.id !== id);
+            return { ...prevCart, items: updatedItems };
+        });
+        dispatch(removeItem(id));
     };
 
-    const handleQuantityChange = (id: number, quantity: number) => {
-        setCart(cart.map((book) => (book.id === id ? { ...book, quantity } : book)));
+    const handleQuantityChange = (id: string, quantity: number) => {
+        if (quantity < 1) return; // Do not allow quantity less than 1
+        setCart((prevCart) => {
+            if (!prevCart) return prevCart;
+            const updatedItems = prevCart.items.map((item) =>
+                item.productId.id === id ? { ...item, quantity: quantity } : item
+            );
+            return { ...prevCart, items: updatedItems };
+        });
+        dispatch(updateItem({ productId: id, updatedItem: { quantity: quantity } }));
     };
 
-    const total = cart.reduce((acc, book) => acc + book.price * book.quantity, 0);
+    useEffect(() => {
+        updateCart(cartItems);
+    }, [cartItems]);
+
+    const total = cart?.items.reduce((acc, book) => acc + book.price * book.quantity, 0) || 0;
 
     return (
         <section className='w-full py-12'>
@@ -61,25 +99,25 @@ export default function CartPage() {
                     </div>
                 </div>
                 <div className='grid gap-6'>
-                    {cart.map((book) => (
-                        <div key={book.id} className='grid md:grid-cols-[120px_1fr_auto] gap-4 items-center'>
+                    {cart?.items.map((book: Item) => (
+                        <div key={book.productId.id} className='grid md:grid-cols-[120px_1fr_auto] gap-4 items-center'>
                             <img
-                                src='/placeholder.svg'
-                                alt={book.title}
+                                src={book.productId.imageUrl}
+                                alt={book.productId.title}
                                 width={120}
                                 height={180}
                                 className='rounded-lg object-cover'
                             />
                             <div className='grid gap-1'>
-                                <h3 className='font-semibold'>{book.title}</h3>
-                                <p className='text-gray-500 dark:text-gray-400'>{book.author}</p>
+                                <h3 className='font-semibold'>{book.productId.title}</h3>
+                                <p className='text-gray-500 dark:text-gray-400'>{book.productId.author}</p>
                             </div>
                             <div className='flex items-center gap-4'>
                                 <div className='flex items-center gap-2'>
                                     <Button
                                         variant='outline'
                                         size='icon'
-                                        onClick={() => handleQuantityChange(book.id, book.quantity - 1)}
+                                        onClick={() => handleQuantityChange(book.productId.id, book.quantity - 1)}
                                     >
                                         <MinusIcon className='h-4 w-4' />
                                     </Button>
@@ -87,13 +125,19 @@ export default function CartPage() {
                                     <Button
                                         variant='outline'
                                         size='icon'
-                                        onClick={() => handleQuantityChange(book.id, book.quantity + 1)}
+                                        type='button'
+                                        onClick={() => handleQuantityChange(book.productId.id, book.quantity + 1)}
                                     >
                                         <PlusIcon className='h-4 w-4' />
                                     </Button>
                                 </div>
                                 <div className='text-lg font-semibold'>${(book.price * book.quantity).toFixed(2)}</div>
-                                <Button variant='outline' size='icon' onClick={() => handleRemoveFromCart(book.id)}>
+                                <Button
+                                    variant='outline'
+                                    size='icon'
+                                    type='button'
+                                    onClick={() => handleRemoveFromCart(book.productId.id)}
+                                >
                                     <TrashIcon className='h-4 w-4' />
                                 </Button>
                             </div>

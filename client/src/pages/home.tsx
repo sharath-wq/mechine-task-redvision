@@ -14,6 +14,10 @@ import { Book } from '@/components/book/data-table';
 import { Card } from '@/components/ui/card';
 import useDebounce from '@/lib/debounce';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addItem } from '@/redux/cart-slice';
+import { useAppSelector } from '@/redux/store';
+import { updateCart } from '@/api/cart';
 
 export default function Component() {
     const [searchTerm, setSearchTerm] = useState<string>('');
@@ -29,9 +33,16 @@ export default function Component() {
     const debouce = useDebounce(searchTerm);
     const [books, setBooks] = useState<Book[]>([]);
 
+    const dispatch = useDispatch();
+    const cartItems = useAppSelector((state) => state.cart.items);
+
     useEffect(() => {
         fetchOptions();
     }, []);
+
+    useEffect(() => {
+        updateCart(cartItems);
+    }, [cartItems]);
 
     // Fetch books from the backend
     async function fetchBooks() {
@@ -113,9 +124,14 @@ export default function Component() {
         fetchBooks();
     }, [debouce, selectedAuthors, selectedCategories, currentPage]);
 
-    // Handle adding a book to the cart
-    const handleAddToCart = (book: Book) => {
-        console.log(`Added ${book.title} to cart`);
+    const handleAddToCart = (id: string, price: number, quantity = 1) => {
+        dispatch(
+            addItem({
+                productId: id,
+                quantity: quantity,
+                price: price,
+            })
+        );
     };
 
     const observer = useRef<IntersectionObserver>();
@@ -238,7 +254,12 @@ export default function Component() {
                                               <span>{book.category}</span>
                                           </div>
                                       </div>
-                                      <Button size='lg' className='w-full'>
+                                      <Button
+                                          type='button'
+                                          onClick={() => handleAddToCart(book.id, book.price)}
+                                          size='lg'
+                                          className='w-full'
+                                      >
                                           Add to Cart
                                       </Button>
                                   </div>

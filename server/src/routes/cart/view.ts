@@ -7,7 +7,7 @@ import { NotAuthorizedError } from '../../errors/not-authorized-error';
 const router = express.Router();
 
 router.get('/api/cart', requireAuth, async (req: Request, res: Response) => {
-    const cart = await Cart.findOne({ userId: req.currentUser!.id });
+    const cart = await Cart.findOne({ userId: req.currentUser!.id }).populate('items.productId');
 
     if (!cart) {
         throw new NotFoundError();
