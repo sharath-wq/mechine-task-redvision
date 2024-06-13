@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { BASE_URL } from '@/constants';
+import Banner from '@/components/banner';
 
 export const SigninValidation = z.object({
     email: z.string().email(),
@@ -59,6 +60,7 @@ export default function LoginPage() {
         <div className='flex justify-center items-center min-h-screen'>
             <Card className='w-full max-w-md p-6 rounded-lg shadow-md'>
                 <CardHeader>
+                    <Banner />
                     <CardTitle>Log In</CardTitle>
                     <CardDescription>Login to access our wide veriety of books.</CardDescription>
                 </CardHeader>

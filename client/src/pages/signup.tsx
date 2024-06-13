@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import Banner from '@/components/banner';
 
 export const SignupValidation = z
     .object({
@@ -67,6 +68,7 @@ export default function SignupPage() {
         <div className='flex justify-center items-center min-h-screen'>
             <Card className='w-full max-w-md p-6  rounded-lg shadow-md'>
                 <CardHeader>
+                    <Banner />
                     <CardTitle>Sign Up</CardTitle>
                     <CardDescription>Create an account to access our book store.</CardDescription>
                 </CardHeader>
