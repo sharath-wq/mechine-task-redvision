@@ -29,7 +29,6 @@ export default function Component() {
 
     const [hasMore, setHasMore] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
     const debouce = useDebounce(searchTerm);
     const [books, setBooks] = useState<Book[]>([]);
 
@@ -139,7 +138,7 @@ export default function Component() {
     const observer = useRef<IntersectionObserver>();
     const lastBookRef = useCallback(
         (node: HTMLDivElement | null) => {
-            if (isLoading || isLoadingMore || isLoading) return; // Check for isLoadingData
+            if (isLoading || isLoading) return; // Check for isLoadingData
             if (observer.current) observer.current.disconnect();
             observer.current = new IntersectionObserver((entries) => {
                 if (entries[0].isIntersecting && hasMore) {
@@ -148,7 +147,7 @@ export default function Component() {
             });
             if (node) observer.current.observe(node);
         },
-        [isLoading, isLoadingMore, isLoading, hasMore]
+        [isLoading, isLoading, hasMore]
     );
 
     return (
