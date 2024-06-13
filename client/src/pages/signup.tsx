@@ -41,6 +41,7 @@ export default function SignupPage() {
         },
     });
 
+    axios.defaults.withCredentials = true;
     async function onSubmit(values: z.infer<typeof SignupValidation>) {
         try {
             const { data } = await axios.post(`${BASE_URL}/users/signup`, values);
