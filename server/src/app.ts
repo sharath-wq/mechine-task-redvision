@@ -43,7 +43,7 @@ app.use(cors(corsOptions));
 app.use(
     cookieSession({
         signed: false,
-        secure: true,
+        secure: process.env.NODE_ENV !== 'test',
         sameSite: 'none',
     })
 );
