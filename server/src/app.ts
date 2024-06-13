@@ -30,11 +30,21 @@ app.set('trust proxy', true);
 app.use(json());
 app.use(cors(corsOptions));
 
+// enable this on local devlepment
+// app.use(
+//     cookieSession({
+//         signed: false,
+//         secure: false,
+//         // sameSite: 'none',
+//     })
+// );
+
+// on production
 app.use(
     cookieSession({
         signed: false,
-        secure: false,
-        // sameSite: 'none',
+        secure: true,
+        sameSite: 'none',
     })
 );
 
