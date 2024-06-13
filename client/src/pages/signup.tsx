@@ -151,7 +151,7 @@ export default function SignupPage() {
                                 </Link>
                             </div>
                             <Button className='w-full' type='submit'>
-                                {isSubmitting ? <Loader /> : 'Sign Up'}
+                                {isSubmitting ? <Loader className='animate-spin' /> : 'Sign Up'}
                             </Button>
                         </form>
                     </Form>

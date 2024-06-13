@@ -112,7 +112,7 @@ export default function LoginPage() {
                                 </Link>
                             </div>
                             <Button className='w-full' type='submit'>
-                                {isSubmitting ? <Loader /> : ' Sign in'}
+                                {isSubmitting ? <Loader className='animate-spin' /> : ' Sign in'}
                             </Button>
                         </form>
                     </Form>
