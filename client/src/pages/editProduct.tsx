@@ -4,7 +4,7 @@ import CloudinaryUploadWidget from '../context/cld-ctx';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { BASE_URL, IMAGEUPLOADCONFIG } from '@/constants';
+import { BASE_URL, IMAGEUPLOADCONFIG, categories } from '@/constants';
 import { Loader } from 'lucide-react';
 import axios from 'axios';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
@@ -192,10 +192,11 @@ export default function EditProduct() {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                <SelectItem value='fiction'>Fiction</SelectItem>
-                                                <SelectItem value='non-fiction'>Non-Fiction</SelectItem>
-                                                <SelectItem value='biography'>Biography</SelectItem>
-                                                <SelectItem value='cookbook'>Cookbook</SelectItem>
+                                                {categories.map((category) => (
+                                                    <SelectItem key={category.value} value={category.value}>
+                                                        {category.label}
+                                                    </SelectItem>
+                                                ))}
                                             </SelectContent>
                                         </Select>
                                         <FormMessage />
