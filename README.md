@@ -61,7 +61,28 @@ Make sure you have the following installed on your machine:
     JWT_KEY=your_jwt_secret_key
     ```
 
-5. Start the backend server:
+5. Cookie session goto app.ts file and uncommnend the development config and commend the produciton config
+
+    ```
+    // uncomment this on development envorment
+    // app.use(
+    //     cookieSession({
+    //         signed: false,
+    //         secure: false,
+    //     })
+    // );
+
+    // on production
+    app.use(
+        cookieSession({
+            signed: false,
+            secure: process.env.NODE_ENV !== 'test',
+            sameSite: 'none',
+        })
+    );
+    ```
+
+6. Start the backend server:
 
     ```sh
     npm run start-dev
