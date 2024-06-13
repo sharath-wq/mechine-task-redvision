@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { BASE_URL } from '@/constants';
 import Banner from '@/components/banner';
+import { useEffect, useState } from 'react';
 
 export const SigninValidation = z.object({
     email: z.string().email(),
@@ -55,12 +56,24 @@ export default function LoginPage() {
         }
     }
 
+    const [isVisible, setIsVisible] = useState(true);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setIsVisible(false);
+        }, 10000);
+
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, []);
+
     const { isSubmitting } = form.formState;
     return (
         <div className='flex justify-center items-center min-h-screen'>
             <Card className='w-full max-w-md p-6 rounded-lg shadow-md'>
                 <CardHeader>
-                    <Banner />
+                    {isVisible && <Banner />}
                     <CardTitle>Log In</CardTitle>
                     <CardDescription>Login to access our wide veriety of books.</CardDescription>
                 </CardHeader>

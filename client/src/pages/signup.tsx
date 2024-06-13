@@ -13,6 +13,7 @@ import { toast } from '@/components/ui/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Banner from '@/components/banner';
+import { useEffect, useState } from 'react';
 
 export const SignupValidation = z
     .object({
@@ -64,11 +65,23 @@ export default function SignupPage() {
 
     const { isSubmitting } = form.formState;
 
+    const [isVisible, setIsVisible] = useState(true);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            setIsVisible(false);
+        }, 10000);
+
+        return () => {
+            clearTimeout(timeout);
+        };
+    }, []);
+
     return (
         <div className='flex justify-center items-center min-h-screen'>
             <Card className='w-full max-w-md p-6  rounded-lg shadow-md'>
                 <CardHeader>
-                    <Banner />
+                    {isVisible && <Banner />}
                     <CardTitle>Sign Up</CardTitle>
                     <CardDescription>Create an account to access our book store.</CardDescription>
                 </CardHeader>
