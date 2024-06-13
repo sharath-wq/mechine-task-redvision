@@ -14,6 +14,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import Banner from '@/components/banner';
 import { useEffect, useState } from 'react';
+import { BASE_URL } from '@/constants';
 
 export const SignupValidation = z
     .object({
@@ -42,7 +43,7 @@ export default function SignupPage() {
 
     async function onSubmit(values: z.infer<typeof SignupValidation>) {
         try {
-            const { data } = await axios.post(`http://localhost:3000/api/users/signup`, values);
+            const { data } = await axios.post(`${BASE_URL}/users/signup`, values);
             toast({
                 description: 'Account created.',
             });
